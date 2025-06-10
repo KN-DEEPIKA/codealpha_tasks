@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator</title>
+   
+    </head>
+    <style>
+        
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        .calculator {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            min-height: 50px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #e9f7ef;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    
+    </style>
+<body>
+    <div class="calculator">
+        <h1>Age Calculator</h1>
+        <p>Enter your date of birth to calculate your age</p>
+        
+        <div class="input-group">
+            <label for="day">Day:</label>
+            <input type="number" id="day" min="1" max="31" placeholder="DD">
+            <div id="day-error" class="error"></div>
+        </div>
+        
+        <div class="input-group">
+            <label for="month">Month:</label>
+            <select id="month">
+                <option value="">Select Month</option>
+                <option value="0">January</option>
+                <option value="1">February</option>
+                <option value="2">March</option>
+                <option value="3">April</option>
+                <option value="4">May</option>
+                <option value="5">June</option>
+                <option value="6">July</option>
+                <option value="7">August</option>
+                <option value="8">September</option>
+                <option value="9">October</option>
+                <option value="10">November</option>
+                <option value="11">December</option>
+            </select>
+            <div id="month-error" class="error"></div>
+        </div>
+        
+        <div class="input-group">
+            <label for="year">Year:</label>
+            <input type="number" id="year" min="1900" max="2099" placeholder="YYYY">
+            <div id="year-error" class="error"></div>
+        </div>
+        
+        <button onclick="calculateAge()">Calculate Age</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function calculateAge() {
+            // Clear previous errors and result
+            document.getElementById('day-error').textContent = '';
+            document.getElementById('month-error').textContent = '';
+            document.getElementById('year-error').textContent = '';
+            document.getElementById('result').textContent = '';
+            
+            // Get input values
+            const day = document.getElementById('day').value;
+            const month = document.getElementById('month').value;
+            const year = document.getElementById('year').value;
+            
+            // Validate inputs
+            let isValid = true;
+            
+            if (!day || day < 1 || day > 31) {
+                document.getElementById('day-error').textContent = 'Please enter a valid day (1-31)';
+                isValid = false;
+            }
+            
+            if (month === '') {
+                document.getElementById('month-error').textContent = 'Please select a month';
+                isValid = false;
+            }
+            
+            if (!year || year < 1900 || year > new Date().getFullYear()) {
+                document.getElementById('year-error').textContent = `Please enter a valid year (1900-${new Date().getFullYear()})`;
+                isValid = false;
+            }
+            
+            if (!isValid) return;
+            
+            // Create date object (months are 0-indexed in JavaScript)
+            const birthDate = new Date(year, month, day);
+            
+            // Validate the date (in case of invalid dates like Feb 30)
+            if (birthDate.getDate() != day || birthDate.getMonth() != month || birthDate.getFullYear() != year) {
+                document.getElementById('result').textContent = 'Invalid date! Please check your inputs.';
+                document.getElementById('result').style.backgroundColor = '#ffebee';
+                return;
+            }
+            
+            // Calculate age
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            // Adjust age if birthday hasn't occurred yet this year
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            
+            // Display result
+            const resultElement = document.getElementById('result');
+            if (age >= 0) {
+                resultElement.textContent = `You are ${age} years old.`;
+                resultElement.style.backgroundColor = '#e9f7ef';
+            } else {
+                resultElement.textContent = 'Invalid date! You cannot be born in the future.';
+                resultElement.style.backgroundColor = '#ffebee';
+            }
+        }
+    </script>
+</body>
+</html>
